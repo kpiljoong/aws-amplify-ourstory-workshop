@@ -1,14 +1,15 @@
 import React from 'react';
 
-import { View, ScrollView, RefreshControl, Alert,
-  ActionSheetIOS, Platform,
-  StyleSheet, Dimensions } from 'react-native';
-  
+import { 
+    View, Text,
+    ScrollView, RefreshControl, ActivityIndicator,
+    Alert,
+    StyleSheet, Dimensions 
+} from 'react-native';
+
 import Auth from '@aws-amplify/auth';
 import API, { graphqlOperation } from '@aws-amplify/api';
 import Storage from '@aws-amplify/storage';
-
-import AWSCONFIG from './aws-exports';
 
 import Header from './Header';
 import PostCard from './PostCard';
@@ -16,7 +17,10 @@ import PostCard from './PostCard';
 import * as Queries from './graphql/queries';
 import * as Mutations from './graphql/mutations';
 
-import { ImagePicker, Permissions } from 'expo';
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+
+import AWSCONFIG from './aws-exports';
 
 import { Buffer } from 'buffer';
 import { v4 as uuid } from 'uuid';
@@ -26,8 +30,7 @@ class Feed extends React.Component {
   state = {
     userId: '',
     username: '',
-    posts: [],
-    optionsVisible: false
+    posts: []
   }
   
   componentDidMount = async () => {
@@ -55,28 +58,29 @@ class Feed extends React.Component {
   
   onRefresh = () => {
     this.setState({ refreshing: true });
-    this.listPosts().then(() => this.setState({ refreshing: false }));
+    this.listPosts().then(() => {
+      this.setState({ refreshing: false })
+    });
   }
-
-  uploadPost = async () => {
+  
+  uploadPost = async() => {
     await Permissions.askAsync(Permissions.CAMERA_ROLL);
     const result = await ImagePicker.launchImageLibraryAsync(
-      { base64: true, allowsEditing: false }
+        { base64: true, allowsEditing: false }
     );
-      
+    
     if (!result.cancelled) {
-      this.setState({ refreshing: true});
-      await this.uploadPictureToS3(result).then(() => {
-        Alert.alert(
-          '성공',
-          '사진이 성공적으로 업로드되었습니다.',
-          [{ text: '확인', onPress: () => this.onRefresh() }],
-          { cancelable: false }
-          );
-      });
+        this.setState({ refreshControl: true });
+        await this.uploadPictureToS3(result).then(() => {
+            Alert.alert(
+                '성공',
+                '사진이 성공적으로 업로드되었습니다.',
+                [{ text: '확인', onPress: () => this.onRefresh() }],
+                { cancelable: false });
+        });
     }
   }
-
+  
   uploadPictureToS3 = async (localImage) => {
     const key = uuid() + '.jpg';
     const buffer = new Buffer(localImage.base64, 'base64');
@@ -96,49 +100,18 @@ class Feed extends React.Component {
       console.log(e);
     });
   }
-
-  isOwnPost = (key) => {
-    return this.state.posts.filter(pic => pic.file.key === key)[0].userId === this.state.userId;
-  }
-
-  onOptionsPressed = (key) => {
-    if (Platform.OS == 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions({
-          options: ['닫기', '삭제'],
-          destructiveButtonIndex: 1,
-          cancelButtonIndex: 0
-        },
-        (btnIdx) => {
-          if (btnIdx === 1 && this.isOwnPost(key)) {
-            this.deletePost(key);
-          } else if (btnIdx === 1) {
-            Alert.alert('권한이 없습니다.');
-          }
-        }
-      )
-    } else {
-      this.showOptions();
-    }
-  }
-    
-  showOptions = () => {
-    this.setState({ optionsVisible: true });
-  }
   
-  hideOptions = () => {
-    this.setState({ optionsVisible: false });
-  }
-
   deletePost = (key) => {
     Alert.alert(
-      '사진 삭제',
-      '정말 삭제하시겠습니까?',
-      [
-        { text: '취소', onPress: () => { return }, style: 'cancel' },
-        { text: '삭제', onPress: () => this.apiDeletePicture(key) }
-      ],
-      { cancelable: false }
-    )
+        '사진 삭제',
+        '정말 삭제하시겠습니까?',
+        [
+          { text: '취소', onPress: () => { return }, style: 'cancel' },
+          { text: '삭제', onPress: () => this.apiDeletePicture(key) }
+        ],
+        { cancelable: false }
+      )
+    
   }
 
   apiDeletePicture = async (key) => {
@@ -168,13 +141,14 @@ class Feed extends React.Component {
         { cancelable: false });
     }
   }
-
+  
   removeImageFromS3 = async (key) => {
     await Storage.remove(key)
     .then(ret => console.log('Image deleted', ret))
     .catch(err => console.log('error: ', err));
   }
-
+  
+  // Likes
   onLikePressed = async (key) => {
     const postObj = await this.state.posts.filter(post => post.file.key === key);
     const userId = await this.state.userId;
@@ -217,13 +191,17 @@ class Feed extends React.Component {
   render() {
     let userId = this.state.userId;
     let keys = this.state.posts.map(post => post.file.key)
-    let { posts, refreshing } = this.state;
+    let { posts, refreshing, uploading } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Header uploadPost={this.uploadPost} />
         </View>
-
+      
+        <View>
+          { uploading && <ActivityIndicator size="large" color="#0000ff" />}
+        </View>
+      
         <ScrollView
           style={{ marginBottom: 10}}
           contentContainerStyle={styles.contentContainer}
@@ -238,7 +216,7 @@ class Feed extends React.Component {
                 id={key}
                 userId={userId}
                 posts={posts}
-                onOptionsPressed={() => this.onOptionsPressed(key)}
+                onDeletePressed={ this.deletePost }
                 onLikePressed={() => this.onLikePressed(key)} />
             ))
           }

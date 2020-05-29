@@ -1,9 +1,11 @@
 import React from 'react';
 
-import { View, ScrollView, RefreshControl, 
-  ActivityIndicator, 
-  StyleSheet, Dimensions } from 'react-native';
-  
+import { 
+    View, Text,
+    ScrollView, RefreshControl, ActivityIndicator,
+    StyleSheet, Dimensions 
+} from 'react-native';
+
 import Auth from '@aws-amplify/auth';
 import API, { graphqlOperation } from '@aws-amplify/api';
 
@@ -21,8 +23,6 @@ class Feed extends React.Component {
   }
   
   componentDidMount = async () => {
-    this.setState({ uploading: false });
-    
     await Auth.currentAuthenticatedUser()
       .then(user => {
         this.setState({

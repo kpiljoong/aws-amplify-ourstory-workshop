@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { 
+    View, Text,
+    TouchableOpacity,
+    StyleSheet
+} from 'react-native';
+
+import { Ionicons } from '@expo/vector-icons';
 
 class Header extends React.Component {
   
@@ -8,9 +14,7 @@ class Header extends React.Component {
     return (
       <View style={styles.header}>
         <TouchableOpacity />
-        
         <Text style={styles.title}>OurStory</Text>
-        
         <TouchableOpacity />
       </View>
     )

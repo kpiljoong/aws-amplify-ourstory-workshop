@@ -1,11 +1,16 @@
 import React from 'react';
 
-import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import { 
+    View, Text, Image, TouchableOpacity, 
+    Dimensions, StyleSheet 
+} from 'react-native';
 import { Card } from 'native-base';
 
 import { S3Image } from 'aws-amplify-react-native';
 
-import Ionicons from '@expo/vector-icons/Ionicons';
+import OptionsMenu from "react-native-options-menu";
+
+import { Ionicons } from '@expo/vector-icons';
 
 class PostCard extends React.Component {
 
@@ -19,8 +24,12 @@ class PostCard extends React.Component {
       <Card>
         <View style={styles.cardInfo}>
           <Text style={styles.username}>{ this.getUsername() }</Text>
-          <TouchableOpacity onPress={this.props.onOptionsPressed}>
-            <Ionicons name="ios-more" size={30} color="black" style={styles.actionButton} />
+          <TouchableOpacity>
+            <OptionsMenu
+              customButton={<Ionicons name="ios-more" size={30} style={styles.actionButton} />}
+              destructiveIndex={1}
+              options={["Delete", "Cancel"]}
+              actions={[() => this.props.onDeletePressed(this.props.id), null]}/>
           </TouchableOpacity>
         </View>
         <S3Image style={styles.image} imgKey={this.props.id} />
@@ -48,7 +57,7 @@ class PostCard extends React.Component {
       height: width
     },
     actionButton: {
-      lineHeight: 60, 
+      lineHeight: 60,
       marginRight: 15
     }
   })

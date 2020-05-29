@@ -3,20 +3,23 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import Amplify, { Auth } from 'aws-amplify';
 import { withAuthenticator } from 'aws-amplify-react-native';
-import AWSCONFIG from './src/aws-exports';
+import AWSCONFIG from './src/aws-exports.js';
+
+Amplify.configure({
+   ...AWSCONFIG,
+   Analytics: { 
+       disabled: true
+   }
+});
 
 import Feed from './src/Feed';
 
-Amplify.configure(AWSCONFIG);
-
-class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Feed />
-      </View>
-    );
-  }
+function App() {
+  return (
+    <View style={styles.container}>
+      <Feed />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

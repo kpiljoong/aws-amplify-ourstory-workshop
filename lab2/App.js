@@ -3,18 +3,21 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import Amplify, { Auth } from 'aws-amplify';
 import { withAuthenticator } from 'aws-amplify-react-native';
-import AWSCONFIG from './src/aws-exports';
+import AWSCONFIG from './src/aws-exports.js';
 
-Amplify.configure(AWSCONFIG);
+Amplify.configure({
+   ...AWSCONFIG,
+   Analytics: { 
+       disabled: true
+   }
+});
 
-class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-      </View>
-    );
-  }
+function App() {
+  return (
+    <View style={styles.container}>
+      <Text>Hi AWS!</Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

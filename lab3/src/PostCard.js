@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import { 
+    View, Text, Image, TouchableOpacity, 
+    Dimensions, StyleSheet 
+} from 'react-native';
 import { Card } from 'native-base';
 
 import { S3Image } from 'aws-amplify-react-native';
@@ -41,6 +44,10 @@ class PostCard extends React.Component {
     image: {
       width: width, 
       height: width
+    },
+    actionButton: {
+      lineHeight: 60,
+      marginRight: 15
     }
   })
   
