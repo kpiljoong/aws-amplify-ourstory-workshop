@@ -1,5 +1,6 @@
-# aws-amplify-appsync-ourstory-workshop
+# aws-design-and-build-modern-mobile-apps
 
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fkpiljoong%2Faws-amplify-ourstory-workshop&count_bg=%236ABA2D&title_bg=%23B21A1A&icon=&icon_color=%23E38B8B&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 ## Overview of the Workshop
 
@@ -11,10 +12,6 @@
 * **Lab4: Post Posts**
 * **Lab5: Delete Posts**
 * **Lab6: Likes**
-
-### TODO
-
-Like Notification and Speeding-up Listing will be updated.
 
 ### Cleanup
 
