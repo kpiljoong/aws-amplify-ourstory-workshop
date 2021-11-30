@@ -5,36 +5,44 @@ import { Dimensions } from 'react-native';
 import {
     Text,
     VStack,
-    HStack,     // Added
-    Menu,       // Added
-    Pressable,  // Added
-	Icon,        // Added
+    HStack,
+    Menu,
+    Pressable,
+	Icon,
 	IconButton,
 } from 'native-base';
 
-// Added
 import { MaterialIcons } from '@expo/vector-icons';
 
 import { S3Image } from 'aws-amplify-react-native';
 
 const windowWidth = Dimensions.get('window').width;
 
+import Storage from '@aws-amplify/storage';
+
+Storage.configure({
+    customPrefix: {
+        private: 'resized-public/'
+    },
+});
+
 class PostCard extends React.Component {
 
-    getCurrentItem = () => this.props.post;
+    getCurrentItem = () => this.props.post
   
-    getUsername = () => this.getCurrentItem().username;
+    getUsername = () => this.getCurrentItem().username
     
     isOwnPost = () => {
       return this.props.userId == this.props.post.userId;
     }
     
     getNumberOfLikes = () => this.getCurrentItem() && this.getCurrentItem().likes.items.length;
-
+    
     hasLikes = () => this.getNumberOfLikes() !== 0;
     
     isOwnLike = () => this.hasLikes() && this.getCurrentItem().likes.items.filter(like => like.userId === this.props.userId).length !== 0;
-    
+
+
     render () {
         let likeIcon;
         if (this.isOwnLike()) {
@@ -42,6 +50,8 @@ class PostCard extends React.Component {
         } else {
             likeIcon = <Icon as={<MaterialIcons name='favorite-border' />} color='#FF0000' size='md' />
         }
+        let imgKey = this.getCurrentItem().file.key.replace('original', 'resized');
+        console.log('imgKey', imgKey);
         return (
             <VStack>
                 <HStack justifyContent='space-between' alignItems='center'>
@@ -62,7 +72,7 @@ class PostCard extends React.Component {
                     }
                 </HStack>
                 <HStack>
-                    <S3Image imgKey={this.getCurrentItem().file.key} style={{ height:windowWidth, width:windowWidth }} />
+                    <S3Image imgKey={imgKey} style={{ height:windowWidth, width:windowWidth }} />
                 </HStack>
                 <HStack>
                     <IconButton 

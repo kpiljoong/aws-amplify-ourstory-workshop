@@ -13,7 +13,6 @@ import {
 	Platform,
 } from 'react-native';
 
-
 import { Auth } from 'aws-amplify'
 import API, { graphqlOperation } from '@aws-amplify/api';
 
@@ -37,6 +36,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { withInAppNotification } from 'react-native-in-app-notification';
 
 class Feed extends React.Component {
+    
     state = {
         userId: '',
         username: '',
@@ -52,6 +52,7 @@ class Feed extends React.Component {
                 })
             })
             .catch(err => console.log(err));
+        
         await this.subscribe();
         await this.listPosts();
     }
@@ -72,14 +73,7 @@ class Feed extends React.Component {
     }
     
     componentWillUnmount() { this.createLikeListener.unsubscribe(); }
-    
-    onRefresh = () => {
-        this.setState({ refreshing: true });
-        this.listPosts().then(() => {
-            this.setState({ refreshing: false })
-        });
-    }
-    
+
     listPosts = async () => {
         try {
             const data = await API.graphql(graphqlOperation(Queries.byCreatedAt, {
@@ -93,6 +87,13 @@ class Feed extends React.Component {
         }
     }
     
+    onRefresh = () => {
+        this.setState({ refreshing: true });
+        this.listPosts().then(() => {
+            this.setState({ refreshing: false })
+        });
+    }
+    
     uploadPost = async() => {
         await Camera.requestCameraPermissionsAsync()
         const result = await ImagePicker.launchImageLibraryAsync(
@@ -100,19 +101,19 @@ class Feed extends React.Component {
         );
         // upload selected photo
         if (!result.cancelled) {
-          this.setState({ refreshing: true });
-          await this.uploadPictureToS3(result).then(() => {
-              Alert.alert(
-                  'Success',
-                  'Photo is successfully uploaded',
-                  [{ text: 'Close', onPress: () => this.onRefresh() }],
-                  { cancelable: false });
-          });
+            this.setState({ refreshing: true });
+            await this.uploadPictureToS3(result).then(() => {
+                Alert.alert(
+                    'Success',
+                    'Photo is successfully uploaded',
+                    [{ text: 'Close', onPress: () => this.onRefresh() }],
+                    { cancelable: false });
+            });
         }
     }
     
     uploadPictureToS3 = async (localImage) => {
-        const key = uuid() + '.jpg';
+        const key = 'original-' + uuid() + '.jpg';
         const buffer = new Buffer(localImage.base64, 'base64');
         Storage.put(key, buffer, {
             contentType: 'image/jpg'
@@ -149,7 +150,7 @@ class Feed extends React.Component {
                 { cancelable: false }
             );
         } else {
-            this.apiDeletePost(key);
+            this.apiDeletePost(key)
         }
     }
     
@@ -204,7 +205,7 @@ class Feed extends React.Component {
             console.log('deleteLike error: ', err);
         }
     }
-    
+      
     onLikePressed = async (key) => {
         const postObj = await this.state.posts.filter(post => post.file.key === key);
         const userId = await this.state.userId;
@@ -221,31 +222,31 @@ class Feed extends React.Component {
     }
 
 	render() {
-	    let { refreshing } = this.state;
-
-		return (
-		    <VStack>
-				<Header uploadPost={this.uploadPost} />
-				<ScrollView
-					refreshControl={
-		                <RefreshControl
-		                    refreshing={this.state.refreshing}
-		                    onRefresh={this.onRefresh} />}>
-				{
-					this.state.posts.map((p, i) => (
-				        <PostCard
-				      	    key={p.id}
-		      		        id={p.id}
-		      		        userId={this.state.userId}
-		      		        post={p}
-		      		        deletePost={this.deletePost}
-		      		        onLikePressed={this.onLikePressed} />
-		      	    ))
-		        }
-		        </ScrollView>
+        let { refreshing } = this.state;
+    
+    	return (
+            <VStack>
+                <Header uploadPost={this.uploadPost} />
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh} />}>
+                {
+                    this.state.posts.map((p, i) => (
+                        <PostCard
+                            key={p.id}
+                            id={p.id}
+                            userId={this.state.userId}
+                            post={p}
+                            deletePost={this.deletePost}
+                            onLikePressed={this.onLikePressed} />
+                    ))
+                }
+                </ScrollView>
             </VStack>
-		);
-	}
+        );
+    }
 }
 
 export default withInAppNotification(Feed);

@@ -1,7 +1,8 @@
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import Amplify, { Auth } from 'aws-amplify';
+import Amplify, { Auth } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react-native';
 import AWSCONFIG from './src/aws-exports.js';
 
@@ -12,12 +13,11 @@ Amplify.configure({
    }
 });
 
-import Feed from './src/Feed';
-
 function App() {
   return (
     <View style={styles.container}>
-      <Feed />
+      <Text>Hello re:Invent 2021!</Text>
+      <StatusBar style="auto" />
     </View>
   );
 }

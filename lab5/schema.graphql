@@ -1,0 +1,22 @@
+type Like @model @auth(rules: [{ allow: private }]) {
+  id: ID!
+  userId: String!
+  username: String!
+  post: Post @belongsTo
+}
+
+type Post @model @auth(rules: [{ allow: private }]) {
+	id: ID!
+	userId: String!
+	username: String!
+	file: S3Object
+    type: String @default(value: "Post") @index(name: "byType", queryField: "byCreatedAt", sortKeyFields: ["createdAt"])
+    likes: [Like] @hasMany
+	createdAt: AWSDateTime!
+}
+
+type S3Object {
+	bucket: String!
+	region: String!
+	key: String!
+}

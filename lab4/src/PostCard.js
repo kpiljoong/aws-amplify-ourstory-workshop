@@ -1,54 +1,56 @@
 import React from 'react';
 
-import { 
-    View, Text, Image, TouchableOpacity, 
-    Dimensions, StyleSheet 
-} from 'react-native';
-import { Card } from 'native-base';
+import { Dimensions } from 'react-native';
+
+import {
+    Text,
+    VStack,
+    HStack,
+    Menu,
+    Pressable,
+	Icon,
+} from 'native-base';
+
+import { MaterialIcons } from '@expo/vector-icons';
 
 import { S3Image } from 'aws-amplify-react-native';
 
+const windowWidth = Dimensions.get('window').width;
+
 class PostCard extends React.Component {
 
-  getCurrentItem = () => 
-    this.props.posts.filter(post => post.file.key === this.props.id)[0];
+    getCurrentItem = () => this.props.post
   
-  getUsername = () => this.getCurrentItem().username;
+    getUsername = () => this.getCurrentItem().username
+    
+    isOwnPost = () => {
+      return this.props.userId == this.props.post.userId;
+    }
 
-  render () {
-    return (
-      <Card>
-        <View style={styles.cardInfo}>
-          <Text style={styles.username}>{ this.getUsername() }</Text>
-        </View>
-        <S3Image style={styles.image} imgKey={this.props.id} />
-      </Card>
-      )
+    render () {
+        return (
+            <VStack>
+                <HStack justifyContent='space-between' alignItems='center'>
+                    <Text style={{ fontWeight: 'bold', height: 50, lineHeight: 50, marginLeft: 10 }}>
+                        { this.getUsername() }
+                    </Text>
+                    { this.isOwnPost() && 
+                        <Menu w="100"
+                            trigger={(triggerProps) => {
+                                return (
+                                    <Pressable {...triggerProps}>
+                                        <Icon as={<MaterialIcons name='more-horiz' />} color='black' size='md' />
+                                    </Pressable>
+                                )
+                            }}>
+                            <Menu.Item onPress={() => this.props.deletePost(this.props.post.file.key) }>Delete</Menu.Item>
+                        </Menu>
+                    }
+                </HStack>
+                <S3Image imgKey={this.getCurrentItem().file.key} style={{ height:windowWidth, width:windowWidth }} />
+            </VStack>
+        )
     }
-  }
-  
-  let width = Dimensions.get('window').width;
-  
-  const styles = StyleSheet.create({
-    cardInfo: {
-      height: 50,
-      flexDirection: 'row'
-    },
-    username: {
-      fontWeight: 'bold',
-      height: 60,
-      lineHeight: 60,
-      flex: 1,
-      marginLeft: 8
-    },
-    image: {
-      width: width, 
-      height: width
-    },
-    actionButton: {
-      lineHeight: 60,
-      marginRight: 15
-    }
-  })
-  
-  export default PostCard
+}
+
+export default PostCard

@@ -1,4 +1,6 @@
 {
+  "name": "ourstory",
+  "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -8,19 +10,27 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@react-native-community/netinfo": "5.5.1",
-    "aws-amplify": "^3.0.13",
-    "aws-amplify-react-native": "^4.2.0",
-    "expo": "~37.0.3",
-    "native-base": "^2.13.12",
-    "react": "~16.9.0",
-    "react-dom": "~16.9.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.1.tar.gz",
-    "react-native-web": "~0.11.7"
+    "@react-native-async-storage/async-storage": "^1.15.13",
+    "@react-native-community/netinfo": "6.0.2",
+    "@react-native-picker/picker": "2.1.0",
+    "aws-amplify": "4.3.8",
+    "aws-amplify-react-native": "6.0.1",
+    "expo": "~43.0.2",
+    "expo-camera": "12.0.3",
+    "expo-image-picker": "11.0.3",
+    "expo-status-bar": "~1.1.0",
+    "native-base": "^3.3.0-rc.0",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-native": "0.64.3",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-svg": "^12.1.1",
+    "react-native-web": "0.17.1",
+    "styled-components": "^5.3.3",
+    "styled-system": "^5.1.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.6",
-    "babel-preset-expo": "~8.1.0"
+    "@babel/core": "^7.12.9"
   },
   "private": true
 }

@@ -1,43 +1,27 @@
 import React from 'react';
 
 import { 
-    View, Text,
-    TouchableOpacity,
-    StyleSheet
-} from 'react-native';
+    Text,
+    IconButton,
+    Icon,
+    HStack,
+} from 'native-base'
 
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+
 
 class Header extends React.Component {
-  
-  render() {
-    return (
-      <View style={styles.header}>
-        <TouchableOpacity />
-        <Text style={styles.title}>OurStory</Text>
-        
-        <TouchableOpacity onPress={this.props.uploadPost}>
-            <Ionicons style={{ fontSize: 40 }} name="ios-camera" />
-        </TouchableOpacity>
-      </View>
-    )
-  }
+    render() {
+        return (
+            <HStack px="1" py="3" justifyContent='space-between' alignItems='center'>
+                <HStack space="4" alignItems='center'>
+                    <Text style={{ fontWeight: 'bold', height: 50, lineHeight: 50, fontSize: 30 }}>OurStory</Text>
+                </HStack>
+                <HStack space="2">
+                    <IconButton onPress={this.props.uploadPost} icon={<Icon as={<MaterialIcons name='photo-camera' />} color='black' size='md' />} />
+                </HStack>
+            </HStack>
+        )
+    }
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 40,
-    paddingLeft: 7,
-    paddingRight: 7
-  },
-  title: {
-    fontWeight: 'bold', 
-    fontSize: 30
-  }
-})
-
 export default Header
